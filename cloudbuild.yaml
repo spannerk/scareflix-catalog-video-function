@@ -1,0 +1,13 @@
+steps:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - functions
+  - deploy
+  - scareflix-cat-api-video-function
+  - --region=europe-west1
+  - --source=api_function
+  - --trigger-http
+  - --runtime=python312
+  - --entry-point=get_video
+  - --gen2 
