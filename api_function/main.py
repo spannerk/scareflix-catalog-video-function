@@ -5,10 +5,22 @@ def get_video_from_id(id):
     db = firestore_v1.Client(project='scareflix', database='scareflix-db')
     path = "videos/{}".format(id)
     doc = db.document(path).get()
-    return {'id':id, 'data': doc.to_dict(), 'metadata': get_metadata(doc, db.collection("tmdb_metadata"))}
+    return {'id':id,
+            'data': doc.to_dict(),
+            'metadata': get_metadata(doc, db.collection("tmdb_metadata")), 
+            'trigger_warnings': get_trigger_warnings(doc, db.collection("ddtd_metadata"))}
 
 def get_metadata(doc, collection_ref):
     metadata_id = doc.to_dict().get('tmdb_metadata_id')
+    if metadata_id:
+        metadata_ref = collection_ref.document(metadata_id)
+        metadata = metadata_ref.get()
+        if metadata.exists:
+            return metadata.to_dict()
+    return None
+
+def get_trigger_warnings(doc, collection_ref):
+    metadata_id = doc.to_dict().get('ddtd_metadata_id')
     if metadata_id:
         metadata_ref = collection_ref.document(metadata_id)
         metadata = metadata_ref.get()
